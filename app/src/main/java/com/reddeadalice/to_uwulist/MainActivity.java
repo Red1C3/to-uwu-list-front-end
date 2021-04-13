@@ -1,11 +1,14 @@
 package com.reddeadalice.to_uwulist;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,19 +46,27 @@ public class MainActivity extends AppCompatActivity {
     private final String HOST="192.168.1.108";
     private final String PORT="8080";
     private Note[] notes;
+    private SwipeRefreshLayout refreshLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         RequestHandler.getInstance().init(getApplicationContext());
         notesLayout=(LinearLayout)findViewById(R.id.notes_layout);
-
+        refreshLayout=(SwipeRefreshLayout)findViewById(R.id.refresh_layout);
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshNotes();
+            }
+        });
         refreshNotes();
     }
     private void refreshNotes(){
         JsonArrayRequest request=new JsonArrayRequest(Request.Method.GET, "http://" + HOST + ":" + PORT + "/notes", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
+                notesLayout.removeAllViews();
                 int length=response.length();
                 notes=new Note[length];
                 try{
@@ -73,16 +84,15 @@ public class MainActivity extends AppCompatActivity {
                         notesLayout.addView(v);
                     }
                 }
+                refreshLayout.setRefreshing(false);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(getApplicationContext(),"Failed to get response from server",Toast.LENGTH_SHORT).show();
-                notes=null;
+                refreshLayout.setRefreshing(false);
             }
         });
         RequestHandler.getInstance().addRequest(request);
-
-        //Toast.makeText(getApplicationContext(), Arrays.toString(notes),Toast.LENGTH_SHORT).show();
     }
 }
