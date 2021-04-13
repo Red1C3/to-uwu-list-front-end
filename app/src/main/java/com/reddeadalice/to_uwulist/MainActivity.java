@@ -2,9 +2,12 @@ package com.reddeadalice.to_uwulist;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ShareCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,8 +49,8 @@ public class MainActivity extends AppCompatActivity {
         private int id;
     }
     private LinearLayout notesLayout;
-    private final String HOST="192.168.1.108";
-    private final String PORT="8080";
+    public static final String HOST="192.168.1.108";
+    public static final String PORT="8080";
     private Note[] notes;
     private SwipeRefreshLayout refreshLayout;
     @Override
@@ -108,5 +111,9 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this,"Failed to delete note",Toast.LENGTH_SHORT).show();
         });
         RequestHandler.getInstance().addRequest(request);
+    }
+    public void showAddingFragment(View view){
+        Intent intent= new Intent(this,InsertingActivity.class);
+        startActivity(intent);
     }
 }
