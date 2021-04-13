@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
 public class RequestHandler {
@@ -22,4 +23,5 @@ public class RequestHandler {
     public void addRequest(JsonArrayRequest jsonArrayRequest){
         queue.add(jsonArrayRequest);
     }
+    public void addRequest(JsonObjectRequest jsonObjectRequest){queue.add(jsonObjectRequest);}
 }
