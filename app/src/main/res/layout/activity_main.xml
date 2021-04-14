@@ -13,7 +13,7 @@
         android:clickable="true"
         android:contentDescription="Adds a new note"
         android:focusable="true"
-        android:onClick="showAddingFragment"
+        android:onClick="startInsertingActivity"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/plus" />

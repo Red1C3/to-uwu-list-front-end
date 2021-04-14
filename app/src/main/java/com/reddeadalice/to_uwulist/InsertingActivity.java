@@ -25,6 +25,7 @@ public class InsertingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_inserting);
         editText=(EditText)findViewById(R.id.note_box);
     }
+    //Adds a note to the server database
     public void addNote(View view){
         String note=editText.getText().toString();
         JSONObject jsonObject=new JSONObject();
@@ -34,7 +35,7 @@ public class InsertingActivity extends AppCompatActivity {
             Toast.makeText(this,"Invalid note",Toast.LENGTH_SHORT).show();
             return;
         }
-        JsonObjectRequest request=new JsonObjectRequest(Request.Method.POST,"http://" + MainActivity.HOST + ":" + MainActivity.PORT + "/add",jsonObject,
+        JsonObjectRequest request=new JsonObjectRequest(Request.Method.POST,MainActivity.HOST + "/add",jsonObject,
                 response -> {
             startActivity(new Intent(this,MainActivity.class));
                 },error -> {

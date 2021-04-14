@@ -39,20 +39,14 @@ public class MainActivity extends AppCompatActivity {
             this.id=id;
             this.note=note;
         }
-        public int getId(){
-            return id;
-        }
-        public String getNote(){
-            return note;
-        }
         private String note;
         private int id;
     }
     private LinearLayout notesLayout;
-    public static final String HOST="192.168.1.108";
-    public static final String PORT="8080";
+    public static final String HOST=""; //Your server host
     private Note[] notes;
     private SwipeRefreshLayout refreshLayout;
+    //Sets up UI and refreshes the notes from the server
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,16 +54,12 @@ public class MainActivity extends AppCompatActivity {
         RequestHandler.getInstance().init(getApplicationContext());
         notesLayout=(LinearLayout)findViewById(R.id.notes_layout);
         refreshLayout=(SwipeRefreshLayout)findViewById(R.id.refresh_layout);
-        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refreshNotes();
-            }
-        });
+        refreshLayout.setOnRefreshListener(this::refreshNotes);
         refreshNotes();
     }
+    //Retrieves the notes from the server and put them in (notes) array and handles showing them to user
     private void refreshNotes(){
-        JsonArrayRequest request=new JsonArrayRequest(Request.Method.GET, "http://" + HOST + ":" + PORT + "/notes", null, (Response.Listener<JSONArray>) response -> {
+        JsonArrayRequest request=new JsonArrayRequest(Request.Method.GET, HOST + "/notes", null, (Response.Listener<JSONArray>) response -> {
             notesLayout.removeAllViews();
             int length=response.length();
             notes=new Note[length];
@@ -97,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
         });
         RequestHandler.getInstance().addRequest(request);
     }
+    //deletes a note according to its id which is retrived from the server,the note is deleted from inside the server then notes are refreshed
     private void deleteNote(int id){
         JSONObject jsonObject=new JSONObject();
         try {
@@ -105,14 +96,15 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this,"Failed to delete note,json related err",Toast.LENGTH_SHORT).show();
             return;
         }
-        JsonObjectRequest request=new JsonObjectRequest(Request.Method.POST,"http://" + HOST + ":" + PORT + "/delete",jsonObject,response -> {
+        JsonObjectRequest request=new JsonObjectRequest(Request.Method.POST,HOST +  "/delete",jsonObject,response -> {
             refreshNotes();
         },error -> {
             Toast.makeText(MainActivity.this,"Failed to delete note",Toast.LENGTH_SHORT).show();
         });
         RequestHandler.getInstance().addRequest(request);
     }
-    public void showAddingFragment(View view){
+    //An onClick listener to start inserting activity
+    public void startInsertingActivity(View view){
         Intent intent= new Intent(this,InsertingActivity.class);
         startActivity(intent);
     }
